@@ -15,35 +15,59 @@ gameState.draw = function () {
 	drawDeevil(this.posX, this.posY, this.gameOver, this.sucking, this.curFatness);
 }
 
+var keyMap = {37 : false, 39 : false, 38 : false, 40 : false, 90: false};
+
 $(canvas).keydown(function(e) {
 
-	var speed = 1;
+	if (e.keyCode in keyMap) {
+		keyMap[e.keyCode] = true;
+	}
+
+	move();
+
+	gameState.draw();
+
+}).keyup(function(e) {
+	if (e.keyCode in keyMap) {
+		keyMap[e.keyCode] = false;
+	}
+
+	if (!keyMap[90]) {
+		gameState.sucking = false;
+	}
+
+	move();
+
+	gameState.draw();
+});
+
+function move() {
+
 	var x = 0;
 	var y = 0;
+	var speed = 3;
 
-	if (e.keyCode === 37) {
+	
+	if (keyMap[37]) {
 		//left
 		x = -1;
 	}
-	if (e.keyCode === 39) {
+	if (keyMap[39]) {
 		//right
 		x = 1;
 	}
-	if (e.keyCode === 40) {
+	if (keyMap[40]) {
 		//down
 		y = 1;
 	}
-	if (e.keyCode === 38) {
+	if (keyMap[38]) {
 		//up
 		y = -1;
 	}
-	if (e.keyCode === 90) {
+	if (keyMap[90]) {
 		//z = sucking
 		gameState.sucking = true;
 	}	
-	else {
-		gameState.sucking = false;
-	}
 
 	if (gameState.posX > 1*speed && x === -1) {
 		gameState.posX = gameState.posX + x*speed;
@@ -58,11 +82,7 @@ $(canvas).keydown(function(e) {
 	if ((gameState.posY < (412 - 1*speed)) && (y === 1)) {
 		gameState.posY = gameState.posY + y*speed;
 	}
-
-	gameState.draw();
-});
-
-
+}
 
 function drawDeevil(x, y, dead, sucking, fatness) {
 	//max fatness = 3
